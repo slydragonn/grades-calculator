@@ -28,7 +28,7 @@ export default function useCalculator() {
   const addGrade = (id: string, grade: number, value: number) => {
     const gradeIndex = grades.findIndex((el) => el.id === id);
     const updatedGrades = grades.fill(
-      { id, grade, value },
+      { id, grade, value: isNaN(value) ? 0 : value },
       gradeIndex,
       gradeIndex + 1,
     );
@@ -45,9 +45,11 @@ export default function useCalculator() {
 
     const percent = grades.reduce((acc, cur) => acc + cur.value / 100, 0);
 
+    const missingPercent = 1 - percent <= 0 ? 1 : 1 - percent;
+
     const missingGrade =
       minGrade > result
-        ? Number((minGrade - result) / (1 - percent)).toFixed(2)
+        ? Number((minGrade - result) / missingPercent).toFixed(2)
         : 0;
 
     return { result, missingGrade };
